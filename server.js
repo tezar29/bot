@@ -49,7 +49,7 @@ const getMainMenu = () => {
 // Gestion des réponses
 const getResponse = (text) => {
     const input = text.trim();
-    
+
     switch(input) {
         case '1':
             return `📺 *Nos Services*\n\nDiffusion de vidéos et images publicitaires sur un réseau d'écrans numériques. Nous offrons une création et gestion de campagnes via notre interface web/mobile avec une programmation flexible.`;
@@ -78,6 +78,14 @@ app.get('/webhook', (req, res) => {
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
+    // --- LOGS DE DEBUG TEMPORAIRES : à retirer une fois le problème résolu ---
+    console.log('--- Tentative de vérification webhook ---');
+    console.log('mode reçu       :', JSON.stringify(mode));
+    console.log('token reçu      :', JSON.stringify(token), '(longueur:', token ? token.length : 0, ')');
+    console.log('token attendu   :', JSON.stringify(VERIFY_TOKEN), '(longueur:', VERIFY_TOKEN ? VERIFY_TOKEN.length : 0, ')');
+    console.log('tokens identiques ?', token === VERIFY_TOKEN);
+    // --- FIN LOGS DE DEBUG ---
+
     if (mode && token) {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
             console.log('WEBHOOK_VERIFIED');
@@ -85,6 +93,8 @@ app.get('/webhook', (req, res) => {
         } else {
             res.sendStatus(403);
         }
+    } else {
+        res.sendStatus(400);
     }
 });
 
